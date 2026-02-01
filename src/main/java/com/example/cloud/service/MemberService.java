@@ -1,5 +1,6 @@
 package com.example.cloud.service;
 
+import com.example.cloud.exception.MemberNotFoundException;
 import com.example.cloud.dto.CreateMemberRequest;
 import com.example.cloud.dto.CreateMemberResponse;
 import com.example.cloud.dto.GetMemberResponse;
@@ -21,7 +22,7 @@ public class MemberService {
 
     public GetMemberResponse findOne(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new IllegalStateException("없는 멤버입니다.")
+                () -> new MemberNotFoundException("없는 멤버입니다.")
         );
         return new GetMemberResponse(member.getId(), member.getName(), member.getAge(), member.getMbti());
     }
