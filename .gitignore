@@ -36,6 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 
+# image
+images
+
 # properties
 application.properties
 application-local.properties
