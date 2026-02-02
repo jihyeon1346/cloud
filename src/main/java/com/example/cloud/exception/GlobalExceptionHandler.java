@@ -16,4 +16,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
+    @ExceptionHandler(UploadFailedException.class)
+    public ResponseEntity<String> UploadFailedException(UploadFailedException e) {
+        log.error("UploadFailedException : {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<String> ProfileNotFoundException(ProfileNotFoundException e) {
+        log.error("ProfileNotFoundException : {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
 }

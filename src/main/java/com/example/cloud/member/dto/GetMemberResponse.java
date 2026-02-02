@@ -1,4 +1,4 @@
-package com.example.cloud.dto;
+package com.example.cloud.member.dto;
 
 import lombok.Getter;
 
