@@ -12,6 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -19,9 +22,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -32,14 +38,15 @@ jobs:
           script: |
             sudo docker stop cloud-app || true
             sudo docker rm cloud-app || true
-
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
-
             sudo docker run -d \
               --name cloud-app \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
               -e AWS_REGION=ap-northeast-2 \
               ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
+            
+            sleep 5
+            sudo docker ps
             
             sudo docker image prune -f
