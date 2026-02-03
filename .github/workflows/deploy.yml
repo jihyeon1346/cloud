@@ -20,8 +20,8 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/team-intro:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/team-intro:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -30,16 +30,16 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo docker stop team-intro || true
-            sudo docker rm team-intro || true
+            sudo docker stop cloud-app || true
+            sudo docker rm cloud-app || true
 
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/team-intro:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
 
             sudo docker run -d \
-              --name team-intro \
+              --name cloud-app \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
               -e AWS_REGION=ap-northeast-2 \
-              ${{ secrets.DOCKER_USERNAME }}/team-intro:latest
+              ${{ secrets.DOCKER_USERNAME }}/cloud-app:latest
             
             sudo docker image prune -f
